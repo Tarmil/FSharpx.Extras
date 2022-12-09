@@ -46,6 +46,8 @@
     <Compile Include="BinaryIterateeTest.fs" />
     <Compile Include="ValidationTests.fs" />
     <Compile Include="ValidationExample.fs" />
+    <Compile Include="ValidateTests.fs" />
+    <Compile Include="ValidateExample.fs" />
     <Compile Include="ZipListTests.fs" />
     <Compile Include="OptionTests.fs" />
     <Compile Include="ChoiceTests.fs" />

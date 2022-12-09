@@ -33,6 +33,7 @@
     <Compile Include="ComputationExpressions\Option.fs" />
     <Compile Include="ComputationExpressions\Choice.fs" />
     <Compile Include="ComputationExpressions\Validation.fs" />
+    <Compile Include="ComputationExpressions\Validate.fs" />
     <Compile Include="ComputationExpressions\Continuation.fs" />
     <Compile Include="ComputationExpressions\Enumerator.fs" />
     <Compile Include="ComputationExpressions\Async.fs" />

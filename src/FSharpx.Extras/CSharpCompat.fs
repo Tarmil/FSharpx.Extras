@@ -457,7 +457,46 @@ type FSharpResult =
     static member SelectError (o, f: Func<_,_>) = Result.mapError f.Invoke o
 
     [<Extension>]
+    static member Join (c: Result<'a, 'e NonEmptyList>, inner: Result<'b, 'e NonEmptyList>, outerKeySelector: Func<'a,'c>, innerKeySelector: Func<'b,'c>, resultSelector: Func<'a,'b,'d>) =
+        Ok (curry resultSelector.Invoke)
+        |> Validate.ap c
+        |> Validate.ap inner
+
+    [<Extension>]
     static member Sequence c = Result.sequence c
+
+    // validate
+
+    static member Error (x: string) = Result.Error (NonEmptyList.singleton x)
+    static member Errors x : Result<_, string NonEmptyList> = Result.Error x
+    static member Errors (error, [<ParamArray>] errors) : Result<_, string NonEmptyList> = Result.Error (NonEmptyList.create error (Array.toList errors))
+    static member Ok x : Result<_, string NonEmptyList> = Result.Ok x
+
+    static member Validator (p: _ Predicate, errorMsg: string) =
+        let v x =
+            if p.Invoke x
+                then FSharpResult.Ok x
+                else FSharpResult.Error errorMsg
+        Func<_,_>(v)
+
+    [<Extension>]
+    static member ApValidate (f: Result<Func<_,_>, _>, x) =
+        f
+        |> Result.map (fun a -> a.Invoke)
+        |> Validate.ap x
+
+    [<Extension>]
+    static member SequenceValidate s = Validate.sequence s
+
+    [<Extension>]
+    static member SelectMValidate (x, f: Func<_,_>) = Validate.mapM f.Invoke x
+
+    [<Extension>]
+    static member ReturnValidate x : Result<_, string NonEmptyList> = Ok x
+
+    static member EnumerableValidator (f: Func<'a, Result<'a, _ NonEmptyList>>) : Func<'a seq, Result<'a seq, _ NonEmptyList>> =
+        let ff = Validate.seqValidator f.Invoke >> Result.map (fun a -> a :> _ seq)
+        Func<_,_>(ff)
 
     // constructors
 
